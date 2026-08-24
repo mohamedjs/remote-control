@@ -1,0 +1,18 @@
+{
+  "id": "youtube",
+  "name": "YouTube",
+  "context": "media",
+  "order": 1,
+  "match": ["youtube.com", "YouTube"],
+  "controls": [
+    { "id": "playpause", "label": "Play / Pause", "glyph": "⏯", "wide": true, "action": { "key": "k" } },
+    { "id": "back10", "label": "Back 10", "glyph": "⏪", "repeat": true, "action": { "key": "j" } },
+    { "id": "fwd10",  "label": "Fwd 10",  "glyph": "⏩", "repeat": true, "action": { "key": "l" } },
+    { "id": "fullscreen", "label": "Fullscreen", "glyph": "⛶", "action": { "key": "f" } },
+    { "id": "mute", "label": "Mute", "glyph": "🔇", "action": { "key": "m" } },
+    { "id": "captions", "label": "Captions", "glyph": "CC", "action": { "key": "c" } },
+    { "id": "theater", "label": "Theater", "glyph": "▭", "action": { "key": "t" } },
+    { "id": "slower", "label": "Slower", "glyph": "«", "action": { "mods": ["shift"], "key": "," } },
+    { "id": "faster", "label": "Faster", "glyph": "»", "action": { "mods": ["shift"], "key": "." } }
+  ]
+}

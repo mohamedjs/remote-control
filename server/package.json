@@ -1,0 +1,19 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test-deck.js && node test-hub-e2e.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@nut-tree-fork/nut-js": "^4.2.6",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "ip": "^2.0.1",
+    "ws": "^8.21.3"
+  }
+}

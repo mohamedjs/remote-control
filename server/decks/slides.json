@@ -1,0 +1,15 @@
+{
+  "id": "slides",
+  "name": "Slides",
+  "context": "present",
+  "order": 5,
+  "match": ["Google Slides", "PowerPoint", "Keynote", "Impress"],
+  "controls": [
+    { "id": "next", "label": "Next Slide", "glyph": "→", "wide": true, "action": { "key": "right" } },
+    { "id": "prev", "label": "Previous", "glyph": "←", "action": { "key": "left" } },
+    { "id": "first", "label": "First", "glyph": "⇤", "action": { "key": "home" } },
+    { "id": "black", "label": "Black", "glyph": "■", "action": { "key": "b" } },
+    { "id": "white", "label": "White", "glyph": "□", "action": { "key": "w" } },
+    { "id": "exit", "label": "Exit", "glyph": "⏎", "action": { "key": "escape" } }
+  ]
+}

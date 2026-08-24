@@ -1,0 +1,15 @@
+{
+  "id": "system",
+  "name": "System",
+  "context": "global",
+  "order": 0,
+  "controls": [
+    { "id": "playpause", "label": "Play", "glyph": "⏯", "wide": true, "action": { "media": "playpause" } },
+    { "id": "prev",   "label": "Previous", "glyph": "⏮", "action": { "media": "prev" } },
+    { "id": "next",   "label": "Next",     "glyph": "⏭", "action": { "media": "next" } },
+    { "id": "mute",   "label": "Mute",     "glyph": "🔇", "action": { "media": "mute" } },
+    { "id": "voldown","label": "Vol −","glyph": "🔉", "repeat": true, "action": { "media": "voldown" } },
+    { "id": "volup",  "label": "Vol +",    "glyph": "🔊", "repeat": true, "action": { "media": "volup" } },
+    { "id": "stop",   "label": "Stop",     "glyph": "⏹", "action": { "media": "stop" } }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "id": "spotify",
+  "name": "Spotify",
+  "context": "media",
+  "order": 3,
+  "match": ["open.spotify.com", "Spotify"],
+  "controls": [
+    { "id": "playpause", "label": "Play / Pause", "glyph": "⏯", "wide": true, "action": { "key": "space" } },
+    { "id": "prev", "label": "Previous", "glyph": "⏮", "action": { "mods": ["primary"], "key": "left" } },
+    { "id": "next", "label": "Next", "glyph": "⏭", "action": { "mods": ["primary"], "key": "right" } },
+    { "id": "volup", "label": "Vol +", "glyph": "🔊", "repeat": true, "action": { "mods": ["primary"], "key": "up" } },
+    { "id": "voldown", "label": "Vol −", "glyph": "🔉", "repeat": true, "action": { "mods": ["primary"], "key": "down" } },
+    { "id": "search", "label": "Search", "glyph": "🔍", "action": { "mods": ["primary"], "key": "l" } }
+  ]
+}

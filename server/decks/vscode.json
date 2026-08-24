@@ -1,0 +1,15 @@
+{
+  "id": "vscode",
+  "name": "VS Code",
+  "context": "create",
+  "order": 7,
+  "match": ["Visual Studio Code", "Code"],
+  "controls": [
+    { "id": "save", "label": "Save", "glyph": "💾", "wide": true, "action": { "mods": ["primary"], "key": "s" } },
+    { "id": "palette", "label": "Commands", "glyph": "⌘", "action": { "mods": ["primary", "shift"], "key": "p" } },
+    { "id": "quickopen", "label": "Go To File", "glyph": "→", "action": { "mods": ["primary"], "key": "p" } },
+    { "id": "terminal", "label": "Terminal", "glyph": "⌫", "action": { "mods": ["primary"], "key": "`" } },
+    { "id": "sidebar", "label": "Sidebar", "glyph": "▧", "action": { "mods": ["primary"], "key": "b" } },
+    { "id": "find", "label": "Find", "glyph": "🔍", "action": { "mods": ["primary"], "key": "f" } }
+  ]
+}

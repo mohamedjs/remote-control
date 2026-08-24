@@ -1,0 +1,168 @@
+const express = require('express');
+const http = require('http');
+const WebSocket = require('ws');
+const cors = require('cors');
+const ip = require('ip');
+
+const app = express();
+app.use(cors());
+
+const server = http.createServer(app);
+const wss = new WebSocket.Server({ server });
+
+// ─── Try to load nut.js (may fail on some systems) ─────────────
+let mouse = null;
+let keyboard = null;
+let Key = null;
+let Point = null;
+let nutAvailable = false;
+
+try {
+  const nut = require('@nut-tree-fork/nut-js');
+  mouse = nut.mouse;
+  keyboard = nut.keyboard;
+  Key = nut.Key;
+  Point = nut.Point;
+  nutAvailable = true;
+
+  // Configure nut.js
+  mouse.config.mouseSpeed = 2000;
+  mouse.config.autoDelayMs = 0;
+
+  console.log('✅ nut.js loaded — mouse and keyboard control available');
+} catch (err) {
+  console.warn('⚠️  nut.js could not be loaded (mouse/keyboard will be logged only)');
+  console.warn('   Error:', err.message);
+  console.warn('   The server will still work for connectivity testing.');
+}
+
+// Discovery endpoint — always works regardless of nut.js
+app.get('/ping', (req, res) => {
+  res.json({
+    status: 'ok',
+    device: 'laptop',
+    hostname: require('os').hostname(),
+    nutAvailable,
+  });
+});
+
+// Health check
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok', clients: wss.clients.size });
+});
+
+let currentPos = { x: 0, y: 0 };
+
+async function initMouse() {
+  if (!nutAvailable || !mouse) return;
+  try {
+    const pos = await mouse.getPosition();
+    currentPos = { x: pos.x, y: pos.y };
+    console.log(`🖱️  Initial mouse position: ${pos.x}, ${pos.y}`);
+  } catch (err) {
+    console.warn('Could not get initial mouse position:', err.message);
+  }
+}
+initMouse();
+
+wss.on('connection', (ws, req) => {
+  const clientIp = req.socket.remoteAddress;
+  console.log(`📱 Client connected from ${clientIp}`);
+
+  // Send a welcome message to confirm connection
+  ws.send(JSON.stringify({ type: 'welcome', nutAvailable }));
+
+  ws.on('message', async (message) => {
+    try {
+      const data = JSON.parse(message.toString());
+
+      if (data.type === 'move') {
+        currentPos.x += data.dx;
+        currentPos.y += data.dy;
+        // Clamp to reasonable bounds
+        currentPos.x = Math.max(0, currentPos.x);
+        currentPos.y = Math.max(0, currentPos.y);
+
+        if (nutAvailable && mouse && Point) {
+          await mouse.setPosition(new Point(Math.round(currentPos.x), Math.round(currentPos.y)));
+        }
+      }
+      else if (data.type === 'click') {
+        if (!nutAvailable || !mouse) return;
+        if (data.button === 'left') {
+          await mouse.leftClick();
+        } else if (data.button === 'right') {
+          await mouse.rightClick();
+        }
+      }
+      else if (data.type === 'scroll') {
+        if (!nutAvailable || !mouse) return;
+        if (data.dy < 0) {
+          await mouse.scrollUp(Math.abs(data.dy));
+        } else {
+          await mouse.scrollDown(Math.abs(data.dy));
+        }
+      }
+      else if (data.type === 'key') {
+        if (!nutAvailable || !keyboard || !Key) return;
+
+        const keyMap = {
+          'Backspace': Key.Backspace,
+          'Enter': Key.Enter,
+          'Tab': Key.Tab,
+          'Escape': Key.Escape,
+          'Delete': Key.Delete,
+          'Home': Key.Home,
+          'End': Key.End,
+          'PageUp': Key.PageUp,
+          'PageDown': Key.PageDown,
+          'ArrowUp': Key.Up,
+          'ArrowDown': Key.Down,
+          'ArrowLeft': Key.Left,
+          'ArrowRight': Key.Right,
+          'Control': Key.LeftControl,
+          'Alt': Key.LeftAlt,
+          'F1': Key.F1, 'F2': Key.F2, 'F3': Key.F3, 'F4': Key.F4,
+          'F5': Key.F5, 'F6': Key.F6, 'F7': Key.F7, 'F8': Key.F8,
+          'F9': Key.F9, 'F10': Key.F10, 'F11': Key.F11, 'F12': Key.F12,
+        };
+
+        if (keyMap[data.key]) {
+          await keyboard.pressKey(keyMap[data.key]);
+          await keyboard.releaseKey(keyMap[data.key]);
+        } else if (data.key.length === 1) {
+          await keyboard.type(data.key);
+        }
+      }
+    } catch (error) {
+      // Only log real errors, not routine ones
+      if (error.message && !error.message.includes('EPERM')) {
+        console.error('Error handling message:', error.message);
+      }
+    }
+  });
+
+  ws.on('close', () => {
+    console.log(`📱 Client disconnected (${clientIp})`);
+  });
+
+  ws.on('error', (err) => {
+    console.error('WebSocket client error:', err.message);
+  });
+});
+
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, '0.0.0.0', () => {
+  const localIp = ip.address();
+  console.log('');
+  console.log('═══════════════════════════════════════════');
+  console.log('  🖥️  Remote Control Server');
+  console.log('═══════════════════════════════════════════');
+  console.log(`  HTTP:      http://${localIp}:${PORT}`);
+  console.log(`  WebSocket: ws://${localIp}:${PORT}`);
+  console.log(`  Ping:      http://${localIp}:${PORT}/ping`);
+  console.log(`  nut.js:    ${nutAvailable ? '✅ Available' : '⚠️  Not available'}`);
+  console.log('═══════════════════════════════════════════');
+  console.log('');
+  console.log('Waiting for phone to connect...');
+});

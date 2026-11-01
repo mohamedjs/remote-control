@@ -1,0 +1,114 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to build (without v), e.g. 1.0.0"
+        required: true
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.v.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: v
+        run: |
+          CODE=$(node -p "require('./package.json').version")
+          V="${{ github.event.inputs.version }}"
+          if [ -z "$V" ] && [ "$GITHUB_REF_TYPE" = "tag" ]; then V="${GITHUB_REF_NAME#v}"; fi
+          [ -n "$V" ] || V="$CODE"
+          if [ "$V" != "$CODE" ]; then
+            echo "::error::Tag $V does not match package.json version $CODE"; exit 1
+          fi
+          echo "version=$V" >> "$GITHUB_OUTPUT"
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: npm ci && npm test
+
+  build:
+    needs: [version, test]
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: ubuntu-22.04, target: linux }
+          - { os: macos-latest, target: macos-arm64 }
+          - { os: macos-13, target: macos-x86_64 }
+          - { os: windows-latest, target: windows }
+    runs-on: ${{ matrix.os }}
+    env:
+      VERSION: ${{ needs.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: npm ci
+
+      - name: Package (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          packaging/linux/build-bundle.sh "$VERSION"
+          packaging/linux/build-deb.sh "$VERSION" amd64
+          tar -C dist -czf "dist/remote-control-$VERSION-linux-x86_64.tar.gz" remote-control
+          mkdir -p out && cp dist/*.deb dist/*.tar.gz out/
+
+      - name: Package (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          ARCH="${{ matrix.target }}"; ARCH="${ARCH#macos-}"
+          packaging/macos/build-app.sh "$VERSION" "$ARCH"
+          mkdir -p out
+          ditto -c -k --keepParent dist/RemoteControl.app "out/RemoteControl-$VERSION-macos-$ARCH.zip"
+
+      - name: Package (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          packaging\windows\build-bundle.ps1 -Version $env:VERSION
+          choco install innosetup -y --no-progress
+          & "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" "/DAppVersion=$env:VERSION" packaging\windows\remote-control.iss
+          New-Item -ItemType Directory -Force out | Out-Null
+          Copy-Item "dist\RemoteControl-Setup-$env:VERSION.exe" out\
+          Compress-Archive -Path dist\remote-control\* -DestinationPath "out\remote-control-$env:VERSION-windows-x64-portable.zip"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.target }}
+          path: out/*
+          if-no-files-found: error
+
+  release:
+    if: github.ref_type == 'tag' || github.event_name == 'workflow_dispatch'
+    needs: [version, build]
+    runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ needs.version.outputs.version }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { path: artifacts, merge-multiple: true }
+      - run: cd artifacts && sha256sum * > SHA256SUMS.txt && cat SHA256SUMS.txt
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ env.VERSION }}
+          target_commitish: ${{ github.sha }}
+          name: Remote Control v${{ env.VERSION }}
+          generate_release_notes: true
+          files: artifacts/*
+      - name: Refresh the landing page
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh workflow run pages.yml --repo "$GITHUB_REPOSITORY" --ref main || echo "::warning::could not trigger pages.yml"

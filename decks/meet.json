@@ -1,0 +1,14 @@
+{
+  "id": "meet",
+  "name": "Meet",
+  "context": "call",
+  "order": 6,
+  "match": ["meet.google.com", "Zoom", "Google Meet"],
+  "controls": [
+    { "id": "mic", "label": "Mic", "glyph": "🎙", "wide": true, "action": { "mods": ["primary"], "key": "d" } },
+    { "id": "camera", "label": "Camera", "glyph": "📷", "action": { "mods": ["primary"], "key": "e" } },
+    { "id": "hand", "label": "Raise Hand", "glyph": "✋", "action": { "mods": ["primary", "alt"], "key": "h" } },
+    { "id": "chat", "label": "Chat", "glyph": "💬", "action": { "mods": ["primary", "alt"], "key": "c" } },
+    { "id": "fullscreen", "label": "Fullscreen", "glyph": "⛶", "action": { "key": "f" } }
+  ]
+}

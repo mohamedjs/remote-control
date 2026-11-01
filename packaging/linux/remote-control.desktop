@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Remote Control
+Comment=Zero-lag desktop remote trackpad, keyboard & deck hub
+Exec=/opt/remote-control/bin/remote-control dashboard
+Icon=remote-control
+Terminal=false
+Categories=Utility;AudioVideo;
+StartupWMClass=remote-control

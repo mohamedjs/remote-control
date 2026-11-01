@@ -1,0 +1,17 @@
+{
+  "id": "netflix",
+  "name": "Netflix",
+  "context": "media",
+  "order": 2,
+  "match": ["netflix.com", "Netflix"],
+  "controls": [
+    { "id": "playpause", "label": "Play / Pause", "glyph": "⏯", "wide": true, "action": { "key": "space" } },
+    { "id": "back10", "label": "Back 10", "glyph": "⏪", "repeat": true, "action": { "key": "left" } },
+    { "id": "fwd10",  "label": "Fwd 10",  "glyph": "⏩", "repeat": true, "action": { "key": "right" } },
+    { "id": "fullscreen", "label": "Fullscreen", "glyph": "⛶", "action": { "key": "f" } },
+    { "id": "mute", "label": "Mute", "glyph": "🔇", "action": { "key": "m" } },
+    { "id": "volup", "label": "Vol +", "glyph": "🔊", "repeat": true, "action": { "key": "up" } },
+    { "id": "voldown", "label": "Vol −", "glyph": "🔉", "repeat": true, "action": { "key": "down" } },
+    { "id": "escape", "label": "Exit", "glyph": "⏎", "action": { "key": "escape" } }
+  ]
+}

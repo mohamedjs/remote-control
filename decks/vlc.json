@@ -1,0 +1,17 @@
+{
+  "id": "vlc",
+  "name": "VLC",
+  "context": "media",
+  "order": 4,
+  "match": ["VLC media player", "vlc"],
+  "controls": [
+    { "id": "playpause", "label": "Play / Pause", "glyph": "⏯", "wide": true, "action": { "key": "space" } },
+    { "id": "back10", "label": "Back", "glyph": "⏪", "repeat": true, "action": { "key": "left" } },
+    { "id": "fwd10", "label": "Forward", "glyph": "⏩", "repeat": true, "action": { "key": "right" } },
+    { "id": "fullscreen", "label": "Fullscreen", "glyph": "⛶", "action": { "key": "f" } },
+    { "id": "mute", "label": "Mute", "glyph": "🔇", "action": { "key": "m" } },
+    { "id": "next", "label": "Next", "glyph": "⏭", "action": { "key": "n" } },
+    { "id": "prev", "label": "Previous", "glyph": "⏮", "action": { "key": "p" } },
+    { "id": "subtitle", "label": "Subtitles", "glyph": "CC", "action": { "key": "v" } }
+  ]
+}

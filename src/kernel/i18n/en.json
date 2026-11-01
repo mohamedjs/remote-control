@@ -1,0 +1,29 @@
+{
+  "app": {
+    "name": "Remote Control",
+    "tagline": "Zero-lag cross-platform trackpad, keyboard, and deck control",
+    "description": "Drive your computer from your mobile device over low-latency WiFi."
+  },
+  "cli": {
+    "usage": "Usage: remote-control [command] [options]",
+    "commands": "Commands: run, dashboard, window, doctor, help, --version",
+    "options": "Options: --port <port>, --no-window, --verbose",
+    "doctorPassed": "All doctor checks passed successfully.",
+    "doctorFailed": "Some doctor checks failed. See diagnostics above."
+  },
+  "dashboard": {
+    "title": "Remote Control Desktop Hub",
+    "status": "Server Status",
+    "connected": "Connected",
+    "running": "Server Running",
+    "stopped": "Server Stopped",
+    "clients": "Connected Clients",
+    "activeDecks": "Active Decks",
+    "voiceReady": "Voice Intent Ready",
+    "voiceDisabled": "Voice Intent Disabled (Set GROQ_API_KEY)",
+    "nutReady": "nut.js Input Simulation Ready",
+    "nutDisabled": "nut.js Disabled (Log mode only)",
+    "scanQr": "Scan with Expo Go or Mobile App to connect",
+    "pairInstructions": "Ensure your phone and computer are on the same Wi-Fi network."
+  }
+}

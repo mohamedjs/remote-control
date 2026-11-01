@@ -1,0 +1,42 @@
+{
+  "name": "remote-control",
+  "version": "1.0.0",
+  "description": "Zero-lag cross-platform remote control server & companion client",
+  "type": "module",
+  "main": "./src/main.js",
+  "bin": {
+    "remote-control": "./bin/remote-control.js"
+  },
+  "scripts": {
+    "start": "node bin/remote-control.js dashboard",
+    "run": "node bin/remote-control.js run",
+    "dashboard": "node bin/remote-control.js dashboard",
+    "doctor": "node bin/remote-control.js doctor",
+    "test": "node --test test/**/*.test.js",
+    "test:arch": "node --test test/architecture.test.js",
+    "build": "echo 'Ready for packaging'"
+  },
+  "keywords": [
+    "remote-control",
+    "desktop",
+    "trackpad",
+    "keyboard",
+    "decks",
+    "cross-platform"
+  ],
+  "author": "Mohamed <mohamed@tripklik.com>",
+  "license": "ISC",
+  "homepage": "https://mohamedjs.github.io/remote-control/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mohamedjs/remote-control.git"
+  },
+  "dependencies": {
+    "@nut-tree-fork/nut-js": "^4.2.6",
+    "cors": "^2.8.6",
+    "express": "^5.3.0",
+    "ip": "^2.0.1",
+    "qrcode": "^1.5.4",
+    "ws": "^8.22.1"
+  }
+}

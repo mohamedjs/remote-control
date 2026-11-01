@@ -1,0 +1,28 @@
+cask "remote-control" do
+  arch arm: "arm64", intel: "x86_64"
+
+  version "@VERSION@"
+  sha256 arm:   "@SHA_ARM64@",
+         intel: "@SHA_X86_64@"
+
+  url "https://github.com/mohamedjs/remote-control/releases/download/v#{version}/RemoteControl-#{version}-macos-#{arch}.zip"
+  name "Remote Control"
+  desc "Zero-lag cross-platform remote trackpad, keyboard, and deck hub"
+  homepage "https://mohamedjs.github.io/remote-control/"
+
+  depends_on macos: ">= :monterey"
+
+  app "RemoteControl.app"
+  binary "#{appdir}/RemoteControl.app/Contents/MacOS/remote-control"
+
+  postflight do
+    system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "#{appdir}/RemoteControl.app"]
+  end
+
+  uninstall quit: "com.mohamedjs.remotecontrol"
+
+  zap trash: [
+    "~/Library/Application Support/remote-control",
+    "~/Library/Logs/remote-control",
+  ]
+end

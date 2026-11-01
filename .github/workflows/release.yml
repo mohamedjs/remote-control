@@ -37,7 +37,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 22 }
-      - run: npm ci && npm test
+      - run: sudo apt-get update && sudo apt-get install -y xvfb libxtst6
+      - run: npm ci && xvfb-run --auto-servernum npm test
 
   build:
     needs: [version, test]

@@ -14,9 +14,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      - run: sudo apt-get update && sudo apt-get install -y xvfb libxtst6
       - run: npm ci
-      - run: npm test
+      - run: xvfb-run --auto-servernum npm test
       - name: CLI doctor check
-        run: ./bin/remote-control.js doctor || true
+        run: xvfb-run --auto-servernum ./bin/remote-control.js doctor || true
       - name: Verify architecture boundary tests
         run: npm run test:arch

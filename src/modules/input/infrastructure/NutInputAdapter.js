@@ -22,10 +22,18 @@ export class NutInputAdapter {
       const nutModule = require('@nut-tree-fork/nut-js');
 
       this.#nut = nutModule;
-      this.#mouse = nutModule.mouse;
-      this.#keyboard = nutModule.keyboard;
       this.#Key = nutModule.Key;
       this.#Point = nutModule.Point;
+
+      // On Linux, prevent native C++ segfault if no graphical display is present
+      if (process.platform === 'linux' && !process.env.DISPLAY && !process.env.WAYLAND_DISPLAY) {
+        this.#available = false;
+        this.#logger.warn?.('No X11 or Wayland display detected; operating in mock/headless mode.');
+        return;
+      }
+
+      this.#mouse = nutModule.mouse;
+      this.#keyboard = nutModule.keyboard;
 
       // Disable default autoDelay for instant live remote control
       this.#mouse.config.mouseSpeed = 2000;
